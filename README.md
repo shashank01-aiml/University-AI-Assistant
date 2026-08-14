@@ -1,401 +1,188 @@
-# University AI Assistant
+# 🎓 University AI Assistant
 
-An AI-powered academic assistant for the School of Technology that enables students to ask questions about their academic and technical curriculum and receive grounded answers from institution-provided documents.
+> An AI-powered academic assistant that combines a FastAPI backend, document ingestion, semantic embeddings, local vector retrieval, and an LLM generation layer to answer university-related questions from institution-provided material.
 
-The system uses **Retrieval-Augmented Generation (RAG)** to retrieve relevant information from uploaded academic PDFs before generating an answer. Each response can be traced back to the source document and relevant document section.
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-REST%20API-009688?logo=fastapi&logoColor=white) ![RAG](https://img.shields.io/badge/AI-RAG-purple) ![GitHub](https://img.shields.io/badge/Version%20Control-GitHub-181717?logo=github&logoColor=white)
 
----
+## 📌 Project Overview
 
-## 🚀 Overview
+University AI Assistant is a university-focused question-answering platform designed around academic documents. Students can interact with a web portal, while faculty/instructors can manage academic material and upload documents for processing.
 
-The University AI Assistant is designed to provide a centralized question-answering platform for students and instructors.
+The backend exposes REST endpoints through FastAPI. Academic data is maintained in SQLite, while the RAG layer converts document chunks into embeddings and stores the resulting vectors locally for semantic retrieval. The repository also contains generated document chunks and an embedding matrix used by the current local retrieval implementation.
 
-Instructors can upload academic and technical documents such as:
-
-* Course handouts
-* Lecture notes
-* Subject materials
-* Academic regulations
-* Technical documentation
-* Course outlines
-* Reference PDFs
-
-Students can select their:
-
-* Program
-* Year
-* Semester
-* Branch
-* Subject
-
-and ask questions related to their curriculum.
-
-The assistant retrieves relevant information from the uploaded documents and generates an answer using an LLM while maintaining grounding in the retrieved academic content.
-
----
-
-## 🎯 Objectives
-
-The primary objectives of the project are:
-
-1. Provide students with an AI-powered academic assistant.
-2. Enable instructors to upload and manage academic documents.
-3. Use RAG to reduce hallucination and improve answer grounding.
-4. Provide references to the source documents used to generate answers.
-5. Support multiple programs and branches across the School of Technology.
-6. Create a scalable architecture that can initially run locally and later be deployed.
-7. Maintain academic metadata so that responses are relevant to the selected program, semester, branch and subject.
+The project is structured as an MVP that can be extended into a production academic AI platform with authentication, cloud storage, a managed vector database, stronger evaluation, and deployment infrastructure.
 
 ---
 
 ## ✨ Key Features
 
-### Student Features
+### Student
+- Academic context selection
+- Natural-language question answering
+- Chat-style interaction
+- Follow-up questions
+- Source-aware responses from academic documents
 
-* Select academic program
-* Select year
-* Select semester
-* Select branch
-* Select subject
-* Ask natural-language questions
-* Receive AI-generated answers
-* View supporting source references
-* Ask follow-up questions
-* Maintain conversational context
+### Faculty / Instructor
+- Faculty portal UI
+- Subject-oriented document management
+- PDF upload workflow
+- Academic document organization
+- Document processing and indexing
 
-### Instructor Features
+### AI / RAG
+- PDF/document ingestion
+- Text extraction and chunking
+- Sentence-transformer embeddings
+- Semantic similarity search
+- Top-k relevant chunk retrieval
+- Source metadata retained with retrieved chunks
+- LLM generation using retrieved context
 
-* Upload academic PDFs
-* Associate documents with academic metadata
-* Organize documents by program, year, semester, branch and subject
-* Process documents into searchable knowledge
-* Update the academic knowledge base
-
-### AI Features
-
-* Retrieval-Augmented Generation
-* Semantic document search
-* Context-aware question answering
-* Metadata-filtered retrieval
-* Source-grounded responses
-* Conversational follow-up questions
+### Backend
+- FastAPI REST API
+- CORS configuration
+- Academic metadata APIs
+- Document upload APIs
+- RAG search and question-answering endpoints
+- Health-check endpoint
+- Modular API, database, model, service and RAG packages
 
 ---
 
-## 🧠 System Architecture
+## 🏗️ System Architecture
 
-```text
-                    ┌─────────────────────┐
-                    │      Student       │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │ React + TypeScript │
-                    │       Frontend     │
-                    └──────────┬──────────┘
-                               │
-                         REST API
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │      FastAPI       │
-                    │       Backend      │
-                    └──────────┬──────────┘
-                               │
-                    ┌──────────┴──────────┐
-                    │                     │
-                    ▼                     ▼
-          ┌─────────────────┐    ┌─────────────────┐
-          │ Academic SQLite │    │   RAG Pipeline  │
-          │    Database     │    └────────┬────────┘
-          └─────────────────┘             │
-                                          ▼
-                                  ┌─────────────────┐
-                                  │    ChromaDB     │
-                                  │ Vector Database │
-                                  └────────┬────────┘
-                                           │
-                                      Retrieved
-                                       Context
-                                           │
-                                           ▼
-                                  ┌─────────────────┐
-                                  │   Gemini LLM    │
-                                  └────────┬────────┘
-                                           │
-                                           ▼
-                                  Grounded Answer
-                                           │
-                                           ▼
-                                  ┌─────────────────┐
-                                  │     Student     │
-                                  └─────────────────┘
+```mermaid
+flowchart TD
+    A[Student / Faculty] --> B[Web Frontend<br/>HTML CSS JavaScript]
+    B --> C[FastAPI REST API]
+    C --> D[Academic APIs]
+    C --> E[Document Upload APIs]
+    C --> F[RAG Search / Ask APIs]
+    D --> G[(SQLite<br/>Academic Metadata)]
+    E --> H[PDF Documents]
+    H --> I[Document Loader + Chunking]
+    I --> J[Sentence Transformer<br/>all-MiniLM-L6-v2]
+    J --> K[(Local Vector Store<br/>embeddings.npy + chunks.json)]
+    F --> J
+    K --> L[Top-k Semantic Retrieval]
+    L --> M[Retrieved Academic Context]
+    M --> N[LLM Generation Layer<br/>Gemini]
+    N --> B
 ```
+
+For a standalone diagram, see [`docs/architecture.svg`](docs/architecture.svg).
+
+### Architecture layers
+
+| Layer | Responsibility |
+|---|---|
+| Frontend | Student/faculty portal and chat/document-management UI |
+| API | FastAPI REST endpoints and request handling |
+| Database | SQLite academic/application data |
+| Ingestion | PDF loading, text extraction and chunking |
+| Embeddings | Sentence Transformers with `all-MiniLM-L6-v2` |
+| Retrieval | Vector similarity search using NumPy |
+| Generation | LLM response generation using retrieved context |
 
 ---
 
 ## 🔄 RAG Pipeline
 
-The application follows the following pipeline:
-
 ```text
-PDF Upload
+Academic PDF
     ↓
-PDF Text Extraction
+Document Loader
     ↓
-Document Cleaning
+Text Extraction
     ↓
-Text Chunking
+Chunking
     ↓
-Metadata Association
+SentenceTransformer Embeddings
     ↓
-Embedding Generation
+Normalize Embeddings
     ↓
-ChromaDB Storage
+Save embeddings.npy + chunks.json
     ↓
+-----------------------------
 Student Question
     ↓
-Query Embedding
+Question Embedding
     ↓
-Metadata Filtering
+Dot-Product Similarity
     ↓
-Semantic Retrieval
+Rank Chunks
     ↓
-Relevant Context
+Top-K Relevant Chunks
     ↓
-Gemini LLM
+Retrieved Academic Context
+    ↓
+LLM Generation Layer
     ↓
 Grounded Answer
-    ↓
-Source References
 ```
+
+The implementation uses normalized `all-MiniLM-L6-v2` embeddings. Document vectors are saved in `embeddings.npy`, while chunk text and source metadata are saved in `chunks.json`. Query vectors are compared with the stored vectors and the highest-scoring chunks are returned.
 
 ---
 
-## 📚 Document Processing
+## 🧠 Embeddings & Vector Store
 
-When an instructor uploads a PDF, the system processes it through multiple stages.
+### Embedding model
 
-### 1. Text Extraction
+**`sentence-transformers/all-MiniLM-L6-v2`** converts document chunks and user questions into numerical vectors. The vectors are normalized so dot-product similarity can be used for ranking.
 
-The text is extracted from the uploaded academic document.
+### Vector database / retrieval implementation
 
-### 2. Cleaning
+**Important:** the current MVP does **not** use ChromaDB.
 
-Unnecessary formatting and irrelevant content are removed.
+The implemented local vector store uses:
 
-### 3. Chunking
+- `embeddings.npy` — NumPy matrix containing document embeddings
+- `chunks.json` — JSON containing chunk text and source metadata
+- NumPy dot-product similarity for ranking
 
-The document is divided into smaller meaningful sections.
+The vector-store module loads these files, embeds an incoming query, calculates similarity scores, sorts the results, and returns the top-k chunks with source information.
 
-### 4. Metadata Association
+This lightweight design is useful for local development and demonstration. A production version can migrate the retrieval layer to ChromaDB, Qdrant, Pinecone, Weaviate or pgvector.
 
-Each chunk is associated with metadata such as:
+---
+
+## 🤖 LLM / Gemini API Layer
+
+The architecture uses **Google Gemini** as the generation layer after retrieval. The RAG principle is:
 
 ```text
-program
-year
-semester
-branch
-subject
-document_name
-page_number
+Question → Retrieval → Relevant Academic Context → Prompt → Gemini → Answer
 ```
 
-### 5. Embedding
-
-The chunks are converted into vector representations.
-
-### 6. Vector Storage
-
-The embeddings and associated metadata are stored in ChromaDB.
+The repository contains **no API key**. Credentials must be supplied through environment variables during local execution and must never be committed to GitHub.
 
 ---
 
-## 🔎 Retrieval
+## 🔌 API Layer
 
-When a student asks a question, the system:
+The backend is implemented with FastAPI. It registers academic and document routers and exposes root/health endpoints.
 
-1. Converts the question into an embedding.
-2. Identifies the selected academic context.
-3. Searches the vector database.
-4. Applies academic metadata filters.
-5. Retrieves the most relevant chunks.
-6. Passes the retrieved context to the LLM.
-7. Generates a grounded answer.
-8. Returns source information to the student.
-
-This approach ensures that a question about one subject does not unnecessarily retrieve information from unrelated academic content.
-
----
-
-## 🤖 Large Language Model
-
-The project uses **Google Gemini** as the language model.
-
-Gemini is responsible for generating the final response after the relevant academic information has been retrieved.
-
-The LLM is not treated as the primary knowledge source. Instead, the retrieved academic documents provide the context used for answer generation.
-
----
-
-## 🗄️ Databases
-
-### SQLite
-
-SQLite is used for structured academic and application metadata.
-
-Example entities include:
+Typical API areas include:
 
 ```text
-Program
-Year
-Semester
-Branch
-Subject
-Document
-Document Metadata
+GET  /
+GET  /health
+
+/academic/programs
+/academic/years
+/academic/semesters
+/academic/branches
+/academic/subjects
+/academic/documents
+/academic/rag/search
+/academic/rag/ask
+
+POST /documents/upload
 ```
 
-### ChromaDB
-
-ChromaDB is used as the vector database for semantic retrieval.
-
-It stores:
-
-* Document chunks
-* Embeddings
-* Metadata
-* Document identifiers
-* Source information
-
----
-
-## 🛠️ Technology Stack
-
-| Layer               | Technology    |
-| ------------------- | ------------- |
-| Frontend            | React         |
-| Language            | TypeScript    |
-| Build Tool          | Vite          |
-| Backend             | Python        |
-| API Framework       | FastAPI       |
-| Structured Database | SQLite        |
-| Vector Database     | ChromaDB      |
-| LLM                 | Google Gemini |
-| Architecture        | REST API      |
-| AI Architecture     | RAG           |
-| Version Control     | Git / GitHub  |
-
----
-
-## 📁 Project Structure
-
-```text
-university-ai-assistant/
-│
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── services/
-│   │   └── utils/
-│   ├── data/
-│   ├── chroma_db/
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── hooks/
-│   │   └── types/
-│   └── package.json
-│
-├── docs/
-├── tests/
-├── screenshots/
-├── .env.example
-├── .gitignore
-└── README.md
-```
-
----
-
-## ⚙️ Installation
-
-### Prerequisites
-
-Install the following:
-
-* Python 3.10+
-* Node.js 18+
-* npm
-* Git
-
----
-
-## 🔧 Backend Setup
-
-Clone the repository:
-
-```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-
-cd university-ai-assistant
-```
-
-Create and activate a virtual environment:
-
-### Windows
-
-```bash
-python -m venv venv
-
-venv\Scripts\activate
-```
-
-### macOS/Linux
-
-```bash
-python3 -m venv venv
-
-source venv/bin/activate
-```
-
-Install backend dependencies:
-
-```bash
-cd backend
-
-pip install -r requirements.txt
-```
-
-Create your environment file:
-
-```bash
-cp .env.example .env
-```
-
-Add the required API configuration to `.env`.
-
-Start the FastAPI server:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The backend will be available at:
-
-```text
-http://localhost:8000
-```
-
-FastAPI documentation:
+Interactive API documentation:
 
 ```text
 http://localhost:8000/docs
@@ -403,219 +190,292 @@ http://localhost:8000/docs
 
 ---
 
-## 🎨 Frontend Setup
+## 🛠️ Technology Stack
 
-Open another terminal:
-
-```bash
-cd frontend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-The frontend will be available at the URL displayed by Vite.
+| Category | Technology | Purpose |
+|---|---|---|
+| Language | Python | Backend and AI/RAG implementation |
+| API framework | FastAPI | REST API and backend services |
+| Server | Uvicorn | ASGI development server |
+| Database | SQLite | Academic/application metadata |
+| Embeddings | Sentence Transformers | Semantic text embeddings |
+| Embedding model | all-MiniLM-L6-v2 | Text-to-vector conversion |
+| Vector retrieval | NumPy | Local vector storage and ranking |
+| Document format | PDF | Academic knowledge source |
+| Metadata store | JSON | Chunk and source metadata |
+| Frontend | HTML5, CSS3, JavaScript | Student/faculty web interface |
+| AI architecture | RAG | Grounded question answering |
+| LLM | Google Gemini | Natural-language generation |
+| Version control | Git + GitHub | Source control and portfolio hosting |
 
 ---
 
-## 🔐 Environment Variables
+## 📁 Project Structure
 
-Create a `.env` file in the backend directory.
+```text
+University-AI-Assistant/
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/              # REST API routers
+│   │   ├── database/         # Database layer
+│   │   ├── models/           # Data models
+│   │   ├── rag/              # Loader, embeddings, vector retrieval
+│   │   ├── services/         # Application services
+│   │   └── main.py           # FastAPI application
+│   ├── documents/            # Backend document workspace
+│   └── university.db         # Local SQLite database
+│
+├── documents/                # Academic/reference PDFs
+├── frontend/
+│   └── index.html            # Student/faculty web interface
+├── tests/                    # Test workspace
+├── docs/
+│   └── architecture.svg     # Architecture diagram
+├── .env.example              # Safe environment template
+├── .gitignore                # Secret/cache exclusions
+└── README.md
+```
+
+---
+
+## ⚙️ Setup & Installation
+
+### Prerequisites
+
+- Python 3.10+
+- Git
+- A modern web browser
+
+### 1. Clone
+
+```bash
+git clone https://github.com/shashank01-aiml/University-AI-Assistant.git
+cd University-AI-Assistant
+```
+
+### 2. Create a virtual environment
+
+**Windows PowerShell**
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+**Windows CMD**
+
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
+
+**macOS / Linux**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install backend dependencies
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### 4. Configure environment variables
+
+Copy the template to a local environment file and add your own credentials:
+
+```text
+backend/.env
+```
 
 Example:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
-
-DATABASE_URL=sqlite:///./data/academic.db
-
-CHROMA_PERSIST_DIRECTORY=./chroma_db
-
-FRONTEND_URL=http://localhost:5173
 ```
 
-Never commit real API keys or secrets to GitHub.
+**Never commit the real key.**
 
-Only commit `.env.example`.
+### 5. Start FastAPI
+
+From `backend/`:
+
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000
+http://127.0.0.1:8000/docs
+```
+
+### 6. Open the frontend
+
+The current frontend is a standalone HTML application:
+
+```text
+frontend/index.html
+```
+
+Open it in a browser while the FastAPI server is running. Ensure the frontend API base URL points to the local backend.
 
 ---
 
-## 🔒 Security
+## 🖥️ UI Screenshots
 
-The project follows basic security practices including:
+The frontend includes:
 
-* Environment variables for secrets
-* `.gitignore` protection
-* Input validation
-* File-type validation
-* API validation
-* Controlled document uploads
-* Separation of frontend and backend responsibilities
+- Student login/portal flow
+- Student chat interface
+- Academic selection controls
+- Faculty dashboard
+- Subject cards
+- Document upload interface
+- Chat message area and question input
 
-Production deployment should additionally introduce authentication, authorization, rate limiting, secure file storage and HTTPS.
+### Recommended portfolio screenshots
+
+Add real screenshots from the running application under `screenshots/`:
+
+```text
+screenshots/
+├── student-login.png
+├── student-chat.png
+├── faculty-dashboard.png
+└── document-upload.png
+```
+
+**Use screenshots captured from the actual running application**, not generated mockups. This keeps the portfolio accurate and demonstrates that the UI is genuinely implemented.
 
 ---
 
-## 🧪 Testing
+## 🔐 Security
 
-Backend tests can be executed using:
+Never commit:
+
+```text
+.env
+API keys
+passwords
+private credentials
+venv/
+__pycache__/
+```
+
+Use environment variables for API credentials. The public repository contains no Gemini API key.
+
+For production, add authentication, role-based authorization, restricted CORS origins, HTTPS, rate limiting, secure file validation/storage, secret management and audit logging.
+
+---
+
+## 🧪 Testing & Evaluation
+
+Recommended testing areas:
+
+- API health check
+- Academic metadata retrieval
+- PDF upload
+- PDF parsing
+- Chunk generation
+- Embedding generation
+- Vector retrieval
+- Top-k ranking
+- RAG question answering
+- Source metadata preservation
+- Invalid file handling
+- Empty questions
+- Missing academic context
+- Frontend/backend API communication
+
+Run backend tests with:
 
 ```bash
 pytest
 ```
 
-Frontend tests should be added for important UI components and API interactions.
+---
 
-Recommended testing areas include:
+## 📈 Future Enhancements
 
-* Document upload
-* PDF processing
-* Metadata filtering
-* Vector retrieval
-* Chat API
-* Invalid requests
-* Empty queries
-* Missing academic metadata
-* Source reference generation
+### AI / Retrieval
+
+- Production-grade vector database
+- Hybrid keyword + semantic retrieval
+- Reranking of retrieved chunks
+- Structure-aware document chunking
+- Page-level citations
+- Retrieval evaluation metrics
+- Hallucination/faithfulness evaluation
+
+### Application
+
+- Student authentication
+- Faculty authentication
+- Role-based access control
+- Persistent conversation history
+- Personalized academic profiles
+- Multilingual support
+- Voice-based questions
+- Notifications and announcements
+- Feedback and answer-rating system
+
+### Platform / Deployment
+
+- Docker containerization
+- Cloud deployment
+- Managed database
+- Object storage for PDFs
+- CI/CD pipeline
+- Observability and logging
+- Rate limiting
+- Production secrets management
+- Background document processing
 
 ---
 
-## 📊 Example Use Case
+## 🎯 Why This Project Matters
 
-### Scenario
+University information is often distributed across PDFs, lecture notes, course material and administrative documents. Conventional search requires students to know exactly what to look for.
 
-A student selects:
+This project applies RAG to make academic documents conversationally accessible while keeping generation tied to retrieved material.
 
-```text
-Program: B.Tech
-Year: 3
-Semester: 5
-Branch: AIML
-Subject: Machine Learning
-```
+### Skills demonstrated
 
-The student asks:
-
-> What is the difference between bagging and boosting?
-
-The system:
-
-```text
-Question
-   ↓
-Academic Context
-   ↓
-Vector Search
-   ↓
-Relevant Machine Learning PDF Chunks
-   ↓
-Gemini
-   ↓
-Generated Explanation
-   ↓
-Source Reference
-```
-
-The student receives an answer based on the relevant uploaded academic material rather than a generic response alone.
+- Generative AI
+- Retrieval-Augmented Generation
+- Embeddings
+- Semantic search
+- Vector retrieval
+- FastAPI
+- REST APIs
+- SQLite
+- PDF/document processing
+- Frontend development
+- Git/GitHub
 
 ---
 
-## 🌐 Future Scope
+## 🚧 Project Status
 
-The architecture is designed so that additional functionality can be introduced later.
+**Current stage: MVP / internship portfolio development**
 
-Potential improvements include:
-
-* Student authentication
-* Instructor authentication
-* Role-based access control
-* Multi-document management
-* Conversation history
-* Advanced citation handling
-* Voice-based interaction
-* Multilingual support
-* Analytics dashboard
-* Feedback-based answer evaluation
-* Cloud deployment
-* Automated document ingestion
-* Improved retrieval and reranking
-* Administrative dashboard
+The repository contains the core application structure, frontend, FastAPI backend, academic database, document assets and local RAG retrieval implementation. Future engineering work includes productionizing the LLM integration, strengthening evaluation/testing, adding authentication and preparing deployment.
 
 ---
 
-## 💰 Cost Consideration
+## 👨‍💻 Author
 
-The initial MVP is designed to run locally with a target demonstration cost of approximately **₹0**.
-
-Local development avoids the need for paid infrastructure during the initial development and demonstration phase.
-
-External API usage, hosting and production infrastructure may introduce costs during later deployment.
+**Shashank Adepu**  
+GitHub: [@shashank01-aiml](https://github.com/shashank01-aiml)
 
 ---
 
-## 🚧 Current Project Status
+## ⭐ License / Usage
 
-**Status:** MVP Development
-
-### Completed / Planned Core Components
-
-* [x] Project architecture
-* [x] Frontend technology selection
-* [x] Backend technology selection
-* [x] Academic metadata design
-* [x] RAG architecture
-* [x] Vector database selection
-* [x] LLM selection
-* [ ] Frontend implementation
-* [ ] Backend API implementation
-* [ ] PDF ingestion pipeline
-* [ ] Vector indexing
-* [ ] Chat interface
-* [ ] Source citation interface
-* [ ] Testing
-* [ ] Deployment
-
----
-
-## 👨‍💻 Development Philosophy
-
-The project follows a modular architecture so that individual components can be improved without rewriting the entire application.
-
-The separation between:
-
-```text
-Frontend
-    ↓
-API Layer
-    ↓
-Business Logic
-    ↓
-RAG Pipeline
-    ↓
-Databases
-```
-
-allows the system to evolve from a local MVP into a production-ready academic AI platform.
-
----
-
-## 📜 License
-
-This project is intended for academic and internship development purposes.
-
-Add the appropriate license before public production use.
-
----
-
-## ⭐ Acknowledgements
-
-This project was developed as an academic/internship-oriented AI application focused on applying Retrieval-Augmented Generation, vector search, APIs and modern web technologies to university academic assistance.
+This project is intended for academic, learning and internship portfolio purposes. Add a formal open-source license if the project is later distributed for public reuse.
