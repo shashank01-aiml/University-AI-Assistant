@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>AI University</title>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+    --primary: #1677ff;
+    --primary-dark: #075fd8;
+
+    --background: #f5f7fb;
+    --white: #ffffff;
+
+    --text: #172033;
+    --muted: #64748b;
+
+    --border: #e2e8f0;
+
+    --success: #16a34a;
+    --danger: #dc2626;
+}
+
+body {
+    background: var(--background);
+    color: var(--text);
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   LOGIN PAGE
+========================================================= */
+
+#loginPage {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #eef4ff
+        );
+}
+
+.login-card {
+
+    width: 430px;
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 18px;
+
+    padding: 45px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px
+        rgba(15, 23, 42, 0.10);
+}
+
+.login-card h1 {
+
+    font-size: 30px;
+
+    margin-bottom: 8px;
+}
+
+.login-card .subtitle {
+
+    color: var(--muted);
+
+    font-size: 15px;
+
+    margin-bottom: 35px;
+}
+
+.login-card h2 {
+
+    font-size: 19px;
+
+    margin-bottom: 20px;
+}
+
+.login-options {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+.login-option {
+
+    width: 100%;
+
+    padding: 16px;
+
+    border-radius: 10px;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    color: var(--text);
+
+    transition: 0.2s;
+}
+
+.login-option:hover {
+
+    border-color: var(--primary);
+
+    background: #eff6ff;
+
+    transform: translateY(-2px);
+}
+
+.login-option.student {
+
+    background: var(--primary);
+
+    color: white;
+
+    border-color: var(--primary);
+}
+
+.login-option.student:hover {
+
+    background: var(--primary-dark);
+
+    color: white;
+}
+
+.login-option.faculty {
+
+    background: #f8fafc;
+}
+
+.login-footer {
+
+    margin-top: 30px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   PORTAL LAYOUT
+========================================================= */
+
+.portal {
+
+    display: none;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 250px;
+
+    background: white;
+
+    border-right: 1px solid var(--border);
+
+    padding: 25px 16px;
+
+    z-index: 100;
+}
+
+.brand {
+
+    padding: 5px 10px 30px;
+}
+
+.brand h2 {
+
+    font-size: 22px;
+}
+
+.brand p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    margin-top: 5px;
+}
+
+.sidebar-menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+.sidebar-button {
+
+    width: 100%;
+
+    padding: 13px 15px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    text-align: left;
+
+    color: #475569;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.sidebar-button:hover {
+
+    background: #f1f5f9;
+}
+
+.sidebar-button.active {
+
+    background: var(--primary);
+
+    color: white;
+}
+
+.logout-button {
+
+    position: absolute;
+
+    bottom: 25px;
+
+    left: 16px;
+
+    right: 16px;
+
+    padding: 13px;
+
+    border-radius: 9px;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    cursor: pointer;
+
+    color: #475569;
+
+    font-size: 14px;
+}
+
+.logout-button:hover {
+
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main {
+
+    margin-left: 250px;
+
+    min-height: 100vh;
+}
+
+.topbar {
+
+    height: 75px;
+
+    background: white;
+
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 35px;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 50;
+}
+
+.topbar h1 {
+
+    font-size: 23px;
+}
+
+.topbar p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    margin-top: 4px;
+}
+
+.role-badge {
+
+    padding: 9px 17px;
+
+    border-radius: 25px;
+
+    background: #eff6ff;
+
+    border: 1px solid #bfdbfe;
+
+    color: #075fd8;
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+.content {
+
+    padding: 35px;
+
+    max-width: 1400px;
+
+    margin: auto;
+}
+
+
+/* =========================================================
+   STUDENT CHAT
+========================================================= */
+
+.chat-container {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    min-height: 780px;
+
+    display: flex;
+
+    flex-direction: column;
+}
+
+.chat-header {
+
+    padding: 20px 25px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.chat-header h2 {
+
+    font-size: 19px;
+}
+
+.chat-header p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    margin-top: 5px;
+}
+
+.chat-toolbar {
+
+    display: flex;
+
+    gap: 10px;
+
+    padding: 12px 20px;
+
+    border-bottom: 1px solid var(--border);
+
+    background: #fafbfe;
+}
+
+.chat-toolbar button {
+
+    padding: 8px 13px;
+
+    border-radius: 7px;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+.chat-toolbar button:hover {
+
+    background: #f1f5f9;
+}
+
+#chat {
+
+    flex: 1;
+
+    min-height: 560px;
+
+    max-height: 650px;
+
+    overflow-y: auto;
+
+    padding: 25px;
+
+    background: #fafbfe;
+}
+
+.message {
+
+    max-width: 82%;
+
+    padding: 16px 19px;
+
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+
+    line-height: 1.6;
+
+    font-size: 15px;
+}
+
+.user-message {
+
+    margin-left: auto;
+
+    background: var(--primary);
+
+    color: white;
+
+    border-bottom-right-radius: 4px;
+}
+
+.assistant-message {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-bottom-left-radius: 4px;
+}
+
+.input-area {
+
+    display: flex;
+
+    gap: 10px;
+
+    padding: 18px;
+
+    border-top: 1px solid var(--border);
+
+    background: white;
+}
+
+#question {
+
+    flex: 1;
+
+    padding: 14px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 9px;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+#question:focus {
+
+    border-color: var(--primary);
+}
+
+.send-button {
+
+    padding: 0 25px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.send-button:hover {
+
+    background: var(--primary-dark);
+}
+
+
+/* =========================================================
+   FACULTY HOME
+========================================================= */
+
+.faculty-title {
+
+    margin-bottom: 30px;
+}
+
+.faculty-title h2 {
+
+    font-size: 27px;
+}
+
+.faculty-title p {
+
+    color: var(--muted);
+
+    margin-top: 7px;
+}
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 35px;
+}
+
+.stat-card {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 13px;
+
+    padding: 20px;
+}
+
+.stat-card h3 {
+
+    font-size: 28px;
+
+    margin-bottom: 5px;
+}
+
+.stat-card p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.section-title {
+
+    margin-bottom: 18px;
+}
+
+.section-title h2 {
+
+    font-size: 21px;
+}
+
+.section-title p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   SUBJECT CARDS
+========================================================= */
+
+.subject-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+.subject-card {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.subject-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.08);
+
+    border-color: #bfdbfe;
+}
+
+.subject-image {
+
+    height: 150px;
+
+    background:
+        linear-gradient(
+            rgba(40, 70, 100, 0.20),
+            rgba(40, 70, 100, 0.20)
+        ),
+        url(
+            "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1000&q=80"
+        );
+
+    background-size: cover;
+
+    background-position: center;
+}
+
+.subject-content {
+
+    padding: 20px;
+}
+
+.subject-university {
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+.subject-content h3 {
+
+    font-size: 18px;
+
+    line-height: 1.4;
+}
+
+.subject-code {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    margin-top: 7px;
+}
+
+.manage {
+
+    color: var(--primary);
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    margin-top: 16px;
+}
+
+
+/* =========================================================
+   SUBJECT DETAIL
+========================================================= */
+
+#subjectDetail {
+
+    display: none;
+}
+
+.back-button {
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    padding: 10px 17px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    margin-bottom: 20px;
+}
+
+.subject-header {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+}
+
+.subject-header h2 {
+
+    font-size: 26px;
+}
+
+.subject-header p {
+
+    color: var(--muted);
+
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   SINGLE UPLOAD BOX
+========================================================= */
+
+.upload-card {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 30px;
+
+    margin-bottom: 25px;
+}
+
+.upload-card h3 {
+
+    font-size: 20px;
+
+    margin-bottom: 7px;
+}
+
+.upload-card > p {
+
+    color: var(--muted);
+
+    font-size: 14px;
+
+    margin-bottom: 25px;
+}
+
+.upload-box {
+
+    border: 2px dashed #cbd5e1;
+
+    border-radius: 12px;
+
+    padding: 35px;
+
+    background: #f8fafc;
+
+    text-align: center;
+}
+
+.upload-box:hover {
+
+    border-color: var(--primary);
+
+    background: #f0f7ff;
+}
+
+.upload-icon {
+
+    font-size: 35px;
+
+    margin-bottom: 12px;
+}
+
+.upload-box h4 {
+
+    font-size: 17px;
+
+    margin-bottom: 7px;
+}
+
+.upload-box p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+.upload-controls {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+#unitSelect {
+
+    padding: 12px 15px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    background: white;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+#facultyFile {
+
+    max-width: 300px;
+
+    font-size: 13px;
+}
+
+.upload-button {
+
+    padding: 12px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: var(--success);
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.upload-button:hover {
+
+    background: #15803d;
+}
+
+.upload-status {
+
+    margin-top: 18px;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   DOCUMENT LIST
+========================================================= */
+
+.documents-card {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 25px;
+}
+
+.documents-card h3 {
+
+    font-size: 20px;
+
+    margin-bottom: 5px;
+}
+
+.documents-card > p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    margin-bottom: 20px;
+}
+
+.document-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 15px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 9px;
+
+    margin-bottom: 10px;
+
+    background: #fafbfe;
+}
+
+.document-info {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+.document-icon {
+
+    font-size: 22px;
+}
+
+.document-name {
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+.document-unit {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    margin-top: 4px;
+}
+
+.delete-document {
+
+    border: 1px solid #fecaca;
+
+    background: #fef2f2;
+
+    color: var(--danger);
+
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+.delete-document:hover {
+
+    background: #fee2e2;
+}
+
+.empty-documents {
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    border: 1px dashed #cbd5e1;
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .subject-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+
+        width: 70px;
+
+        padding: 15px 8px;
+    }
+
+    .brand p,
+    .sidebar-button span {
+
+        display: none;
+    }
+
+    .brand h2 {
+
+        font-size: 15px;
+    }
+
+    .sidebar-button {
+
+        text-align: center;
+    }
+
+    .main {
+
+        margin-left: 70px;
+    }
+
+    .content {
+
+        padding: 20px;
+    }
+
+    .subject-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+
+        grid-template-columns: 1fr;
+    }
+
+    .upload-controls {
+
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     LOGIN / PORTAL SELECTION
+========================================================= -->
+
+<div id="loginPage">
+
+    <div class="login-card">
+
+        <h1>
+            AI University
+        </h1>
+
+        <p class="subtitle">
+            University Academic Assistant
+        </p>
+
+
+        <h2>
+            Select your portal
+        </h2>
+
+
+        <div class="login-options">
+
+            <button
+                class="login-option student"
+                onclick="enterStudentPortal()"
+            >
+                Student Portal
+            </button>
+
+
+            <button
+                class="login-option faculty"
+                onclick="enterFacultyPortal()"
+            >
+                Faculty Portal
+            </button>
+
+        </div>
+
+
+        <p class="login-footer">
+            Authentication will be connected later.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     STUDENT PORTAL
+========================================================= -->
+
+<div
+    id="studentPortal"
+    class="portal"
+>
+
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <h2>
+                AI University
+            </h2>
+
+            <p>
+                Student Academic Portal
+            </p>
+
+        </div>
+
+
+        <div class="sidebar-menu">
+
+            <button class="sidebar-button active">
+                Student Assistant
+            </button>
+
+        </div>
+
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            ← Back to Portal Selection
+        </button>
+
+    </aside>
+
+
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    AI University
+                </h1>
+
+                <p>
+                    Ask questions about your university documents
+                </p>
+
+            </div>
+
+
+            <div class="role-badge">
+                Student
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <div class="chat-container">
+
+
+                <div class="chat-header">
+
+                    <h2>
+                        AI Academic Assistant
+                    </h2>
+
+                    <p>
+                        Ask questions based on your university documents.
+                    </p>
+
+                </div>
+
+
+                <div class="chat-toolbar">
+
+                    <button
+                        onclick="newChat()"
+                    >
+                        + New Chat
+                    </button>
+
+
+                    <button
+                        onclick="clearChat()"
+                    >
+                        Clear Chat
+                    </button>
+
+                </div>
+
+
+                <div id="chat">
+
+                    <div class="message assistant-message">
+
+                        Hello! 👋
+
+                        <br><br>
+
+                        I am your AI University Assistant.
+
+                        <br><br>
+
+                        Ask me anything about your university documents.
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-area">
+
+                    <input
+                        type="text"
+                        id="question"
+                        placeholder="Ask about your university documents..."
+                        onkeydown="handleKey(event)"
+                    >
+
+
+                    <button
+                        class="send-button"
+                        id="sendButton"
+                        onclick="askQuestion()"
+                    >
+                        Send
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================================================
+     FACULTY PORTAL
+========================================================= -->
+
+<div
+    id="facultyPortal"
+    class="portal"
+>
+
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <h2>
+                AI University
+            </h2>
+
+            <p>
+                Faculty Academic Portal
+            </p>
+
+        </div>
+
+
+        <div class="sidebar-menu">
+
+            <button
+                class="sidebar-button active"
+            >
+                Faculty Portal
+            </button>
+
+        </div>
+
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            ← Back to Portal Selection
+        </button>
+
+    </aside>
+
+
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    AI University
+                </h1>
+
+                <p>
+                    Manage subjects and academic course material
+                </p>
+
+            </div>
+
+
+            <div class="role-badge">
+                Faculty
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <!-- FACULTY HOME -->
+
+            <div id="facultyHome">
+
+
+                <div class="faculty-title">
+
+                    <h2>
+                        Faculty Portal
+                    </h2>
+
+                    <p>
+                        Select a subject to manage its academic documents.
+                    </p>
+
+                </div>
+
+
+                <div class="stats">
+
+                    <div class="stat-card">
+
+                        <h3 id="documentCount">
+                            0
+                        </h3>
+
+                        <p>
+                            Uploaded Documents
+                        </p>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <h3>
+                            5
+                        </h3>
+
+                        <p>
+                            Subjects
+                        </p>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <h3>
+                            5
+                        </h3>
+
+                        <p>
+                            Units per Subject
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="section-title">
+
+                    <h2>
+                        My Subjects
+                    </h2>
+
+                    <p>
+                        Select a subject to upload unit-wise material.
+                    </p>
+
+                </div>
+
+
+                <div class="subject-grid">
+
+
+                    <div
+                        class="subject-card"
+                        onclick="openSubject(
+                            'Deep Learning',
+                            '24TU05MJA0'
+                        )"
+                    >
+
+                        <div class="subject-image"></div>
+
+                        <div class="subject-content">
+
+                            <div class="subject-university">
+                                SOT • 2024 - PANTHERS
+                            </div>
+
+                            <h3>
+                                Deep Learning
+                            </h3>
+
+                            <div class="subject-code">
+                                24TU05MJA0
+                            </div>
+
+                            <div class="manage">
+                                Manage subject →
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="subject-card"
+                        onclick="openSubject(
+                            'Data Analytics and Visualization',
+                            '24TU05MJA3'
+                        )"
+                    >
+
+                        <div class="subject-image"></div>
+
+                        <div class="subject-content">
+
+                            <div class="subject-university">
+                                SOT • 2024 - PANTHERS
+                            </div>
+
+                            <h3>
+                                Data Analytics and Visualization
+                            </h3>
+
+                            <div class="subject-code">
+                                24TU05MJA3
+                            </div>
+
+                            <div class="manage">
+                                Manage subject →
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="subject-card"
+                        onclick="openSubject(
+                            'Cloud Computing',
+                            '24TU05MJC5'
+                        )"
+                    >
+
+                        <div class="subject-image"></div>
+
+                        <div class="subject-content">
+
+                            <div class="subject-university">
+                                SOT • 2024 - PANTHERS
+                            </div>
+
+                            <h3>
+                                Cloud Computing
+                            </h3>
+
+                            <div class="subject-code">
+                                24TU05MJC5
+                            </div>
+
+                            <div class="manage">
+                                Manage subject →
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="subject-card"
+                        onclick="openSubject(
+                            'Applicative Project - 1',
+                            '24TU05MJM0'
+                        )"
+                    >
+
+                        <div class="subject-image"></div>
+
+                        <div class="subject-content">
+
+                            <div class="subject-university">
+                                SOT • 2024 - PANTHERS
+                            </div>
+
+                            <h3>
+                                Applicative Project - 1
+                            </h3>
+
+                            <div class="subject-code">
+                                24TU05MJM0
+                            </div>
+
+                            <div class="manage">
+                                Manage subject →
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        class="subject-card"
+                        onclick="openSubject(
+                            'Behavioural & Quantitative Transactions',
+                            '24UU00VQA02'
+                        )"
+                    >
+
+                        <div class="subject-image"></div>
+
+                        <div class="subject-content">
+
+                            <div class="subject-university">
+                                SOT • 2024 - PANTHERS
+                            </div>
+
+                            <h3>
+                                Behavioural & Quantitative Transactions
+                            </h3>
+
+                            <div class="subject-code">
+                                24UU00VQA02
+                            </div>
+
+                            <div class="manage">
+                                Manage subject →
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SUBJECT DETAIL
+            ================================================= -->
+
+            <div id="subjectDetail">
+
+
+                <button
+                    class="back-button"
+                    onclick="closeSubject()"
+                >
+                    ← Back to Subjects
+                </button>
+
+
+                <div class="subject-header">
+
+                    <h2 id="selectedSubject">
+                        Cloud Computing
+                    </h2>
+
+                    <p id="selectedCode">
+                        24TU05MJC5
+                    </p>
+
+                    <p>
+                        Upload course documents and assign them to a unit.
+                    </p>
+
+                </div>
+
+
+
+                <!-- ONE UPLOAD BOX ONLY -->
+
+                <div class="upload-card">
+
+                    <h3>
+                        Upload Course Document
+                    </h3>
+
+                    <p>
+                        Select the unit this PDF belongs to, then upload it.
+                    </p>
+
+
+                    <div class="upload-box">
+
+
+                        <div class="upload-icon">
+                            📄
+                        </div>
+
+
+                        <h4>
+                            Upload University Document
+                        </h4>
+
+
+                        <p>
+                            PDF files only
+                        </p>
+
+
+                        <div class="upload-controls">
+
+
+                            <select id="unitSelect">
+
+                                <option value="">
+                                    Select Unit
+                                </option>
+
+                                <option value="Unit 1">
+                                    Unit 1
+                                </option>
+
+                                <option value="Unit 2">
+                                    Unit 2
+                                </option>
+
+                                <option value="Unit 3">
+                                    Unit 3
+                                </option>
+
+                                <option value="Unit 4">
+                                    Unit 4
+                                </option>
+
+                                <option value="Unit 5">
+                                    Unit 5
+                                </option>
+
+                            </select>
+
+
+                            <input
+                                type="file"
+                                id="facultyFile"
+                                accept=".pdf"
+                            >
+
+
+                            <button
+                                class="upload-button"
+                                onclick="uploadFacultyDocument()"
+                            >
+                                Upload Document
+                            </button>
+
+
+                        </div>
+
+
+                        <div
+                            id="facultyUploadStatus"
+                            class="upload-status"
+                        ></div>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DOCUMENTS -->
+
+                <div class="documents-card">
+
+                    <h3>
+                        Course Documents
+                    </h3>
+
+                    <p>
+                        Documents uploaded for this subject.
+                    </p>
+
+
+                    <div id="documentList">
+
+                        <div class="empty-documents">
+
+                            No documents uploaded yet.
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+const API_BASE =
+    "http://127.0.0.1:8000";
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function enterStudentPortal() {
+
+    document.getElementById(
+        "loginPage"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "studentPortal"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "facultyPortal"
+    ).style.display = "none";
+
+}
+
+
+function enterFacultyPortal() {
+
+    document.getElementById(
+        "loginPage"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "studentPortal"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "facultyPortal"
+    ).style.display = "block";
+
+
+    loadDocumentCount();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+
+    document.getElementById(
+        "studentPortal"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "facultyPortal"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "loginPage"
+    ).style.display = "flex";
+
+
+    closeSubject();
+
+}
+
+
+/* =========================================================
+   OPEN SUBJECT
+========================================================= */
+
+let currentSubject =
+    "";
+
+
+let currentSubjectCode =
+    "";
+
+
+function openSubject(
+    subjectName,
+    subjectCode
+) {
+
+    currentSubject =
+        subjectName;
+
+    currentSubjectCode =
+        subjectCode;
+
+
+    document.getElementById(
+        "facultyHome"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "subjectDetail"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "selectedSubject"
+    ).textContent =
+        subjectName;
+
+
+    document.getElementById(
+        "selectedCode"
+    ).textContent =
+        subjectCode;
+
+
+    document.getElementById(
+        "unitSelect"
+    ).value = "";
+
+
+    document.getElementById(
+        "facultyFile"
+    ).value = "";
+
+
+    document.getElementById(
+        "facultyUploadStatus"
+    ).textContent = "";
+
+
+    loadDocumentsForSubject();
+
+}
+
+
+/* =========================================================
+   CLOSE SUBJECT
+========================================================= */
+
+function closeSubject() {
+
+    const home =
+        document.getElementById(
+            "facultyHome"
+        );
+
+    const detail =
+        document.getElementById(
+            "subjectDetail"
+        );
+
+
+    if (home) {
+
+        home.style.display =
+            "block";
+
+    }
+
+
+    if (detail) {
+
+        detail.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =========================================================
+   FACULTY UPLOAD
+========================================================= */
+
+async function uploadFacultyDocument() {
+
+    const fileInput =
+        document.getElementById(
+            "facultyFile"
+        );
+
+
+    const unitSelect =
+        document.getElementById(
+            "unitSelect"
+        );
+
+
+    const status =
+        document.getElementById(
+            "facultyUploadStatus"
+        );
+
+
+    const file =
+        fileInput.files[0];
+
+
+    const unit =
+        unitSelect.value;
+
+
+    if (!unit) {
+
+        status.className =
+            "upload-status";
+
+        status.style.color =
+            "#dc2626";
+
+        status.textContent =
+            "❌ Please select a unit.";
+
+        return;
+
+    }
+
+
+    if (!file) {
+
+        status.className =
+            "upload-status";
+
+        status.style.color =
+            "#dc2626";
+
+        status.textContent =
+            "❌ Please select a PDF.";
+
+        return;
+
+    }
+
+
+    if (
+        !file.name
+            .toLowerCase()
+            .endsWith(".pdf")
+    ) {
+
+        status.style.color =
+            "#dc2626";
+
+        status.textContent =
+            "❌ Only PDF files are allowed.";
+
+        return;
+
+    }
+
+
+    status.style.color =
+        "#64748b";
+
+    status.textContent =
+        "⏳ Uploading and indexing document...";
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "file",
+        file
+    );
+
+
+    /*
+       These values are sent to the backend.
+
+       Your current backend may ignore
+       subject/unit until we modify it.
+    */
+
+    formData.append(
+        "subject",
+        currentSubject
+    );
+
+
+    formData.append(
+        "subject_code",
+        currentSubjectCode
+    );
+
+
+    formData.append(
+        "unit",
+        unit
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_BASE}/documents/upload`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.detail ||
+                "Upload failed."
+            );
+
+        }
+
+
+        status.style.color =
+            "#16a34a";
+
+        status.textContent =
+            "✅ Document uploaded and indexed successfully.";
+
+
+        /*
+           Store frontend information temporarily.
+        */
+
+        saveDocumentLocally(
+            currentSubject,
+            currentSubjectCode,
+            unit,
+            file.name
+        );
+
+
+        fileInput.value = "";
+
+        unitSelect.value = "";
+
+
+        loadDocumentsForSubject();
+
+        loadDocumentCount();
+
+
+    } catch (error) {
+
+        status.style.color =
+            "#dc2626";
+
+        status.textContent =
+            "❌ " + error.message;
+
+    }
+
+}
+
+
+/* =========================================================
+   LOCAL DOCUMENT STORAGE
+========================================================= */
+
+function getLocalDocuments() {
+
+    const data =
+        localStorage.getItem(
+            "aiUniversityDocuments"
+        );
+
+
+    if (!data) {
+
+        return [];
+
+    }
+
+
+    try {
+
+        return JSON.parse(data);
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+function saveDocumentLocally(
+    subject,
+    code,
+    unit,
+    filename
+) {
+
+    const documents =
+        getLocalDocuments();
+
+
+    documents.push({
+
+        subject: subject,
+
+        code: code,
+
+        unit: unit,
+
+        filename: filename,
+
+        uploadedAt:
+            new Date().toLocaleString()
+
+    });
+
+
+    localStorage.setItem(
+        "aiUniversityDocuments",
+        JSON.stringify(documents)
+    );
+
+}
+
+
+/* =========================================================
+   DISPLAY DOCUMENTS
+========================================================= */
+
+function loadDocumentsForSubject() {
+
+    const list =
+        document.getElementById(
+            "documentList"
+        );
+
+
+    const documents =
+        getLocalDocuments()
+            .filter(
+                doc =>
+                    doc.subject ===
+                    currentSubject
+            );
+
+
+    if (
+        documents.length === 0
+    ) {
+
+        list.innerHTML = `
+
+            <div class="empty-documents">
+
+                No documents uploaded yet.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    documents.forEach(
+        (doc, index) => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "document-row";
+
+
+            row.innerHTML = `
+
+                <div class="document-info">
+
+                    <div class="document-icon">
+                        📄
+                    </div>
+
+                    <div>
+
+                        <div class="document-name">
+                            ${escapeHTML(doc.filename)}
+                        </div>
+
+                        <div class="document-unit">
+                            ${escapeHTML(doc.unit)}
+                            •
+                            ${escapeHTML(doc.uploadedAt)}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="delete-document"
+                    onclick="deleteLocalDocument(${index})"
+                >
+                    Delete
+                </button>
+
+            `;
+
+
+            list.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DELETE FRONTEND DOCUMENT RECORD
+========================================================= */
+
+function deleteLocalDocument(
+    subjectIndex
+) {
+
+    const allDocuments =
+        getLocalDocuments();
+
+
+    const subjectDocuments =
+        allDocuments.filter(
+            doc =>
+                doc.subject ===
+                currentSubject
+        );
+
+
+    const documentToDelete =
+        subjectDocuments[
+            subjectIndex
+        ];
+
+
+    if (!documentToDelete) {
+
+        return;
+
+    }
+
+
+    const filtered =
+        allDocuments.filter(
+            doc =>
+                !(
+                    doc.subject ===
+                    documentToDelete.subject &&
+
+                    doc.filename ===
+                    documentToDelete.filename &&
+
+                    doc.unit ===
+                    documentToDelete.unit &&
+
+                    doc.uploadedAt ===
+                    documentToDelete.uploadedAt
+                )
+        );
+
+
+    localStorage.setItem(
+        "aiUniversityDocuments",
+        JSON.stringify(filtered)
+    );
+
+
+    loadDocumentsForSubject();
+
+    loadDocumentCount();
+
+}
+
+
+/* =========================================================
+   DOCUMENT COUNT
+========================================================= */
+
+function loadDocumentCount() {
+
+    const documents =
+        getLocalDocuments();
+
+
+    const count =
+        document.getElementById(
+            "documentCount"
+        );
+
+
+    if (count) {
+
+        count.textContent =
+            documents.length;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   STUDENT CHAT
+========================================================= */
+
+function handleKey(event) {
+
+    if (
+        event.key ===
+        "Enter"
+    ) {
+
+        askQuestion();
+
+    }
+
+}
+
+
+function newChat() {
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    chat.innerHTML = `
+
+        <div class="message assistant-message">
+
+            Hello! 👋
+
+            <br><br>
+
+            New chat started.
+
+            <br><br>
+
+            Ask me anything about your university documents.
+
+        </div>
+
+    `;
+
+}
+
+
+function clearChat() {
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    chat.innerHTML = "";
+
+}
+
+
+async function askQuestion() {
+
+    const input =
+        document.getElementById(
+            "question"
+        );
+
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        return;
+
+    }
+
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    const button =
+        document.getElementById(
+            "sendButton"
+        );
+
+
+    const userMessage =
+        document.createElement(
+            "div"
+        );
+
+
+    userMessage.className =
+        "message user-message";
+
+
+    userMessage.textContent =
+        question;
+
+
+    chat.appendChild(
+        userMessage
+    );
+
+
+    input.value = "";
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Thinking...";
+
+
+    const loading =
+        document.createElement(
+            "div"
+        );
+
+
+    loading.className =
+        "message assistant-message";
+
+
+    loading.textContent =
+        "Thinking...";
+
+
+    chat.appendChild(
+        loading
+    );
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                `${API_BASE}/academic/rag/ask?query=${encodeURIComponent(question)}&top_k=3`
+
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        loading.remove();
+
+
+        const answer =
+            document.createElement(
+                "div"
+            );
+
+
+        answer.className =
+            "message assistant-message";
+
+
+        answer.innerHTML =
+            formatMarkdown(
+                data.answer ||
+                "No answer available."
+            );
+
+
+        if (
+            data.sources &&
+            data.sources.length > 0
+        ) {
+
+            const sourceBox =
+                document.createElement(
+                    "div"
+                );
+
+
+            sourceBox.style.marginTop =
+                "15px";
+
+
+            sourceBox.style.paddingTop =
+                "12px";
+
+
+            sourceBox.style.borderTop =
+                "1px solid #e2e8f0";
+
+
+            const title =
+                document.createElement(
+                    "strong"
+                );
+
+
+            title.textContent =
+                "📚 Sources";
+
+
+            sourceBox.appendChild(
+                title
+            );
+
+
+            data.sources.forEach(
+                source => {
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.style.marginTop =
+                        "8px";
+
+
+                    item.style.fontSize =
+                        "13px";
+
+
+                    item.textContent =
+                        "📄 " +
+                        source.source;
+
+
+                    sourceBox.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+
+            answer.appendChild(
+                sourceBox
+            );
+
+        }
+
+
+        chat.appendChild(
+            answer
+        );
+
+
+    } catch (error) {
+
+        loading.textContent =
+            "❌ Could not connect to the University AI backend.\n\n" +
+            error.message;
+
+    }
+
+
+    button.disabled =
+        false;
+
+
+    button.textContent =
+        "Send";
+
+
+    input.focus();
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+/* =========================================================
+   MARKDOWN
+========================================================= */
+
+function formatMarkdown(
+    text
+) {
+
+    let html =
+        escapeHTML(text);
+
+
+    html =
+        html.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+
+    html =
+        html.replace(
+            /^### (.*)$/gm,
+            "<h3>$1</h3>"
+        );
+
+
+    html =
+        html.replace(
+            /^## (.*)$/gm,
+            "<h2>$1</h2>"
+        );
+
+
+    html =
+        html.replace(
+            /^# (.*)$/gm,
+            "<h1>$1</h1>"
+        );
+
+
+    html =
+        html.replace(
+            /^\* (.*)$/gm,
+            "• $1"
+        );
+
+
+    html =
+        html.replace(
+            /\n/g,
+            "<br>"
+        );
+
+
+    return html;
+
+}
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        document.getElementById(
+            "loginPage"
+        ).style.display =
+            "flex";
+
+
+        document.getElementById(
+            "studentPortal"
+        ).style.display =
+            "none";
+
+
+        document.getElementById(
+            "facultyPortal"
+        ).style.display =
+            "none";
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
